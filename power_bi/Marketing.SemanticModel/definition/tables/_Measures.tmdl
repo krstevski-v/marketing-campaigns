@@ -1,0 +1,161 @@
+table _Measures
+	lineageTag: 776a7155-96ab-4dfe-8050-16f4c425f377
+
+	/// Campaign spend in the current filter context.
+	measure 'Total Spend' = SUM(FactCampaignDaily[Spend])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Volume
+		lineageTag: 76de86af-68a5-4cfd-ad13-f6f55ab64106
+
+	/// Attributed campaign revenue in the current filter context.
+	measure 'Total Revenue' = SUM(FactCampaignDaily[Revenue])
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Volume
+		lineageTag: 3ad46997-b6b0-4181-b894-b42e1642aa81
+
+	/// Sum of observed impressions.
+	measure 'Total Impressions' = SUM(FactCampaignDaily[Impressions])
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 8d2bd93f-d544-445d-83cc-1f698f404381
+
+	/// Sum of observed clicks.
+	measure 'Total Clicks' = SUM(FactCampaignDaily[Clicks])
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: 6b9feb7f-9897-4c02-a3a6-2153f715ed5c
+
+	/// Conversions are events, not verified new customers.
+	measure 'Total Conversions' = SUM(FactCampaignDaily[Conversions])
+		formatString: #,0
+		displayFolder: Volume
+		lineageTag: eecf58b4-0f2a-407f-9ff0-c4ae5832e143
+
+	/// Attributed revenue less campaign spend. Excludes other business costs; not net profit.
+	measure 'Campaign Profit' = [Total Revenue] - [Total Spend]
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Performance
+		lineageTag: 9d8bec11-50ea-4fbe-ae5e-10cb0345c8cf
+
+	/// Spend-weighted return; blank when spend is zero or absent.
+	measure 'ROI %' = DIVIDE([Campaign Profit], [Total Spend])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Performance
+		lineageTag: 72696d57-ebd0-4c36-b1e2-d2e93baf4c9e
+
+	/// Click-weighted conversion rate. Blank when clicks are zero or absent.
+	measure 'CR %' = DIVIDE([Total Conversions], [Total Clicks])
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Performance
+		lineageTag: 70fd027c-c95e-4972-ba3e-c04e9d8061c9
+
+	/// Spend per conversion event. Customer acquisition cost cannot be established from this dataset.
+	measure 'Cost per Conversion' = DIVIDE([Total Spend], [Total Conversions])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		displayFolder: Performance
+		lineageTag: ce08f3c7-fabb-433d-a6f7-e961893daa2e
+
+	/// Clicks divided by impressions.
+	measure 'CTR %' = DIVIDE([Total Clicks], [Total Impressions])
+		formatString: 0.00%
+		displayFolder: Performance
+		lineageTag: 6a64901c-3168-446c-8dc3-fe6f89f322ec
+
+	/// Revenue divided by campaign spend.
+	measure ROAS = DIVIDE([Total Revenue], [Total Spend])
+		formatString: 0.00"x"
+		displayFolder: Performance
+		lineageTag: 60f96ebc-544f-4b1b-875d-ba1da23f3716
+
+	/// Campaigns with observed activity in the current date and dimension filters.
+	measure 'Campaign Count' = DISTINCTCOUNT(FactCampaignDaily[CampaignId])
+		formatString: #,0
+		displayFolder: Coverage
+		lineageTag: b742321c-ede9-4d6f-8987-aed0fa313b31
+
+	/// Count of campaign/date observations; missing dates are not assumed to be zero.
+	measure 'Observed Campaign Days' = COUNTROWS(FactCampaignDaily)
+		formatString: #,0
+		displayFolder: Coverage
+		lineageTag: 3d37b7e2-a05c-45f0-a83a-247464c1fd98
+
+	/// Distinct dates with observed activity.
+	measure 'Observed Calendar Days' = DISTINCTCOUNT(FactCampaignDaily[Date])
+		formatString: #,0
+		displayFolder: Coverage
+		lineageTag: f4abddc6-1c21-4657-8680-ba61201fff88
+
+	/// Portfolio impressions per observed calendar day in the current filters.
+	measure 'Avg Daily Impressions' = DIVIDE([Total Impressions], [Observed Calendar Days])
+		formatString: #,0.00
+		displayFolder: Coverage
+		lineageTag: 0920b30b-4070-41b1-a103-16cee160b60c
+
+	/// Average impressions per observed campaign/date record.
+	measure 'Impressions per Campaign Day' = DIVIDE([Total Impressions], [Observed Campaign Days])
+		formatString: #,0.00
+		displayFolder: Coverage
+		lineageTag: 6263a38e-f372-4ccf-8b4e-3ffceec4f58a
+
+	/// Unweighted campaign mean, used only as the scatter benchmark.
+	measure 'Selected Average Campaign Spend' = CALCULATE(AVERAGEX(VALUES(DimCampaign[campaign_id]), [Total Spend]), ALLSELECTED(DimCampaign[campaign_id]))
+		formatString: \$#,0;(\$#,0);\$#,0
+		displayFolder: Visual helpers
+		lineageTag: d04bae33-a8ba-4763-a306-1e10960f4098
+
+	/// Unweighted campaign ROI mean for scatter quadrants; not portfolio ROI.
+	measure 'Selected Average Campaign ROI' = CALCULATE(AVERAGEX(VALUES(DimCampaign[campaign_id]), [ROI %]), ALLSELECTED(DimCampaign[campaign_id]))
+		formatString: 0.00%
+		displayFolder: Visual helpers
+		lineageTag: 91fc03b5-2a56-4af6-9062-f9ff023d67b5
+
+	/// Colors compare each campaign with the selected campaign averages.
+	measure 'Dynamic Quadrant Color (Dual Winner)' =
+			VAR Spend = [Total Spend]
+			VAR ROI = [ROI %]
+			VAR AvgSpend = [Selected Average Campaign Spend]
+			VAR AvgROI = [Selected Average Campaign ROI]
+			RETURN IF(ISBLANK(Spend) || ISBLANK(ROI), BLANK(),
+			    SWITCH(TRUE(),
+			        Spend >= AvgSpend && ROI >= AvgROI, "#047857",
+			        Spend < AvgSpend && ROI >= AvgROI, "#10B981",
+			        Spend >= AvgSpend && ROI < AvgROI, "#DC2626",
+			        "#94A3B8"))
+		displayFolder: Visual helpers
+		lineageTag: aa552045-1c9d-4567-8ce9-0f4b74d49c90
+
+	/// Handles single, multiple, all and empty company selections.
+	measure 'Selected Company' =
+			VAR SelectedCount = COUNTROWS(VALUES(DimCampaign[company]))
+			VAR AllCount = CALCULATE(DISTINCTCOUNT(DimCampaign[company]), REMOVEFILTERS(DimCampaign))
+			RETURN SWITCH(TRUE(), SelectedCount = 0, "No Companies", SelectedCount = 1,
+			    SELECTEDVALUE(DimCampaign[company]), SelectedCount = AllCount, "All Companies", "Multiple Companies")
+		displayFolder: Visual helpers
+		lineageTag: 88f60266-999f-45aa-90e1-1384d5ef410a
+
+	/// Title for the executive overview.
+	measure 'Dynamic Report Title' = "Campaign Performance Overview - " & [Selected Company]
+		displayFolder: Visual helpers
+		lineageTag: b1f3387d-7ed3-4c8e-950b-22bfb866ef39
+
+	/// Alias retained for existing report bindings.
+	measure 'Report Title' = [Dynamic Report Title]
+		displayFolder: Visual helpers
+		lineageTag: a68291ed-5244-4ad3-ab88-402f0cf6efd6
+
+	measure 'Bubble Size' = [Total Spend]
+		displayFolder: Visual helpers
+		lineageTag: 54debf35-3073-4cc9-b4dd-aa1a9d7b212e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Column
+		dataType: int64
+		isHidden
+		lineageTag: b527e114-1604-435d-81e2-9d8aa594e248
+		sourceColumn: [Column]
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW("Column", BLANK())
+

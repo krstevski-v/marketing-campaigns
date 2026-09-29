@@ -1,0 +1,21 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["SqlServer","DatabaseName","DimCampaign","DimDate","FactCampaignDaily"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table DimCampaign
+ref table DimDate
+ref table FactCampaignDaily
+ref table _Measures
+
+ref cultureInfo en-US
+

@@ -1,0 +1,108 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "6ee4eed7c6537661712a",
+  "displayName": "campaign_overview",
+  "displayOption": "FitToPage",
+  "height": 1080,
+  "width": 1920,
+  "objects": {
+    "background": [
+      {
+        "properties": {
+          "color": {
+            "solid": {
+              "color": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'#F8F9FA'"
+                  }
+                }
+              }
+            }
+          },
+          "transparency": {
+            "expr": {
+              "Literal": {
+                "Value": "0D"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimDate"
+              }
+            },
+            "Property": "Date"
+          }
+        },
+        "name": "DimDate_Date",
+        "type": "Advanced"
+      },
+      {
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimCampaign"
+              }
+            },
+            "Property": "Channel"
+          }
+        },
+        "name": "DimCampaign_Channel",
+        "type": "Advanced"
+      },
+      {
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimCampaign"
+              }
+            },
+            "Property": "Target Audience"
+          }
+        },
+        "name": "DimCampaign_TargetAudience",
+        "type": "Advanced"
+      },
+      {
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimCampaign"
+              }
+            },
+            "Property": "Location"
+          }
+        },
+        "name": "DimCampaign_Location",
+        "type": "Advanced"
+      },
+      {
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "DimCampaign"
+              }
+            },
+            "Property": "Language"
+          }
+        },
+        "name": "DimCampaign_Language",
+        "type": "Advanced"
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+# Local reference files and machine-specific SQL commands
+.local/
+sql/*.local.sql
+
+# Power BI data cache and personal session state
+**/.pbi/cache.abf
+**/.pbi/localSettings.json
+**/.pbi/unappliedChanges.json
+**/.pbi/autoRecovery/
+
+# Local configuration and temporary files
+.env
+.env.*
+!.env.example
+.vs/
+.vscode/
+*.tmp
+*.log
+*.bak
+Thumbs.db
+.DS_Store

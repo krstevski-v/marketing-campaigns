@@ -1,0 +1,6 @@
+expression SqlServer = "localhost\SQLEXPRESS" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 85b815bb-2346-4032-acc8-4e908557c6b8
+
+expression DatabaseName = "marketing_campaign_model" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 2968de51-8f9c-48e7-a20d-4dc8e2ed3bfb
+

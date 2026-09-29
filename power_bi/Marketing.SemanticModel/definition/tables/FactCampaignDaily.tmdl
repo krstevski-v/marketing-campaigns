@@ -1,0 +1,77 @@
+/// Grain: one campaign on one date. All performance measures aggregate this table.
+table FactCampaignDaily
+	lineageTag: 07f29689-8a7d-4803-b1c1-9297aca2242a
+
+	column CampaignId
+		dataType: string
+		isHidden
+		lineageTag: 3378f0d4-94e6-4edf-a1c0-cc4414040b24
+		summarizeBy: none
+		sourceColumn: CampaignId
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-MM-dd
+		lineageTag: a25e445b-99e6-42ad-814b-d6bf0352e68f
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Impressions
+		dataType: int64
+		isHidden
+		lineageTag: 9cee6935-53a5-4f40-8085-542e8049f2be
+		summarizeBy: none
+		sourceColumn: Impressions
+
+	column Clicks
+		dataType: int64
+		isHidden
+		lineageTag: 4b5cdc54-a372-432a-8ada-6572ee3c3cbf
+		summarizeBy: none
+		sourceColumn: Clicks
+
+	column Conversions
+		dataType: int64
+		isHidden
+		lineageTag: e2ebbb22-9abe-4afe-943b-6efa7ebf59fc
+		summarizeBy: none
+		sourceColumn: Conversions
+
+	column Spend
+		dataType: double
+		isHidden
+		lineageTag: dfb4a902-d03b-4eb6-97c4-10e3a8076953
+		summarizeBy: sum
+		sourceColumn: Spend
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Revenue
+		dataType: double
+		isHidden
+		lineageTag: eb07f8ad-3650-4eed-b29e-a3005d8080eb
+		summarizeBy: sum
+		sourceColumn: Revenue
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition FactCampaignDaily = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, DatabaseName),
+				    Data = Source{[Schema="mart", Item="FactCampaignDaily"]}[Data]
+				in
+				    Data
+

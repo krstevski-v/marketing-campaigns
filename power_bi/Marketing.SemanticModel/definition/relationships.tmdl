@@ -1,0 +1,8 @@
+relationship Campaign_Daily
+	fromColumn: FactCampaignDaily.CampaignId
+	toColumn: DimCampaign.campaign_id
+
+relationship Date_Daily
+	fromColumn: FactCampaignDaily.Date
+	toColumn: DimDate.Date
+

@@ -1,0 +1,124 @@
+/// Continuous full-year calendar. Filters daily activity, not campaign start dates.
+table DimDate
+	lineageTag: 7ab74edb-bef3-48cb-95fe-99977ebde776
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: yyyy-MM-dd
+		lineageTag: 20d451f9-cd9a-4b4f-b2f0-2a1260e2f393
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		lineageTag: ff329b59-d2bc-4de7-aee5-32adc50a7e20
+		summarizeBy: none
+		sourceColumn: Year
+
+	column 'Quarter Number'
+		dataType: int64
+		isHidden
+		lineageTag: 082c4cc3-82c9-4a51-ba43-2964a2e09b11
+		summarizeBy: none
+		sourceColumn: QuarterNumber
+
+	column Quarter
+		dataType: string
+		lineageTag: 02f918ee-c238-41b1-bf70-855ea94fb033
+		summarizeBy: none
+		sourceColumn: Quarter
+		sortByColumn: 'Quarter Number'
+
+	column 'Month Number'
+		dataType: int64
+		isHidden
+		lineageTag: 0f5dc817-3847-45bf-a6fd-7d38537047f5
+		summarizeBy: none
+		sourceColumn: MonthNumber
+
+	column 'Month Name'
+		dataType: string
+		lineageTag: 3cc66e11-c030-4f57-a034-86721a3b13ea
+		summarizeBy: none
+		sourceColumn: MonthName
+		sortByColumn: 'Month Number'
+
+	column 'Month Short'
+		dataType: string
+		lineageTag: ceea8d29-0066-4165-91b2-3abb67316532
+		summarizeBy: none
+		sourceColumn: MonthShort
+		sortByColumn: 'Month Number'
+
+	column 'Year Month'
+		dataType: int64
+		isHidden
+		lineageTag: c074e2a0-d728-452b-9c58-2be4989e7d64
+		summarizeBy: none
+		sourceColumn: YearMonth
+
+	column 'Month Year'
+		dataType: string
+		lineageTag: 22039163-4f94-4599-948a-bca316fdfd48
+		summarizeBy: none
+		sourceColumn: MonthYear
+		sortByColumn: 'Year Month'
+
+	column 'Day of Month'
+		dataType: int64
+		lineageTag: 54860c33-f6ae-4fea-82a8-2a13227436c0
+		summarizeBy: none
+		sourceColumn: DayOfMonth
+
+	column 'Day of Week Number'
+		dataType: int64
+		isHidden
+		lineageTag: d414e776-7e78-47ee-9067-bdb7085079df
+		summarizeBy: none
+		sourceColumn: DayOfWeekNumber
+
+	column 'Day Name'
+		dataType: string
+		lineageTag: ebcc6276-6330-4d3a-8711-cc82b750b07c
+		summarizeBy: none
+		sourceColumn: DayName
+		sortByColumn: 'Day of Week Number'
+
+	column 'Is Weekend'
+		dataType: boolean
+		lineageTag: 5f11e1e0-20bf-489d-83d4-3fed59dcc06a
+		summarizeBy: none
+		sourceColumn: IsWeekend
+
+	hierarchy Calendar
+		lineageTag: 6adb0d2a-3048-425c-92b5-77fba1e235ef
+
+		level Year
+			lineageTag: fb64549e-bd28-4fbd-a569-c16aab1b9878
+			column: Year
+
+		level Quarter
+			lineageTag: 65c830ba-05c1-4489-b2f2-9019ecde2f43
+			column: Quarter
+
+		level Month
+			lineageTag: b947c63e-2dbc-4741-bffc-2fcd6e830e7a
+			column: 'Month Name'
+
+		level Date
+			lineageTag: 9ed6826f-e3e4-47fc-b4ca-3b1e460310d6
+			column: Date
+
+	partition DimDate = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, DatabaseName),
+				    Data = Source{[Schema="mart", Item="DimDate"]}[Data]
+				in
+				    Data
+

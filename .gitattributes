@@ -1,0 +1,11 @@
+* text=auto
+*.sql text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.tmdl text eol=lf
+*.pbip text eol=lf
+*.pbir text eol=lf
+*.pbism text eol=lf
+*.pbix binary
+*.png binary
+*.abf binary

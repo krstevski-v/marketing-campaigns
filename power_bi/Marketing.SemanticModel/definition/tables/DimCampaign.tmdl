@@ -1,0 +1,99 @@
+/// One row per campaign; attributes must be constant within each source snapshot. Lifetime dates describe observed coverage.
+table DimCampaign
+	lineageTag: 441ffe46-b6b0-4f1b-b97b-e14cc8f267f7
+
+	column campaign_id
+		dataType: string
+		isKey
+		lineageTag: 9d888423-a947-4633-ab04-cd2fccab217a
+		summarizeBy: none
+		sourceColumn: CampaignId
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column company
+		dataType: string
+		lineageTag: 37a5dddf-019d-4991-bf4b-781fd5ac2709
+		summarizeBy: none
+		sourceColumn: Company
+
+	column Channel
+		dataType: string
+		lineageTag: 57dc1d7a-4d58-4d48-9b92-2240c79d4936
+		summarizeBy: none
+		sourceColumn: Channel
+
+	column 'Target Audience'
+		dataType: string
+		lineageTag: 82a53624-4a1e-469c-b56e-ccb817c1399a
+		summarizeBy: none
+		sourceColumn: TargetAudience
+
+	column Location
+		dataType: string
+		lineageTag: 0b328aa6-0031-4081-b5c2-3d4bc8275461
+		summarizeBy: none
+		sourceColumn: Location
+
+	column Language
+		dataType: string
+		lineageTag: dc21a589-d413-4543-b6e1-8b2d5eb718c6
+		summarizeBy: none
+		sourceColumn: Language
+
+	column start_date
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		lineageTag: 1fe9367a-aa84-4492-a54c-8485539c3ce9
+		summarizeBy: none
+		sourceColumn: StartDate
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column end_date
+		dataType: dateTime
+		formatString: yyyy-MM-dd
+		lineageTag: 59d7bab7-af82-4a7c-83fb-9a6bb545abd8
+		summarizeBy: none
+		sourceColumn: EndDate
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Inclusive span between first and last observed date, not a count of records.
+	column duration_days
+		dataType: int64
+		lineageTag: 523efc35-aacb-4765-8366-c77984ec34d4
+		summarizeBy: none
+		sourceColumn: DurationDays
+
+	column 'Observed Days'
+		dataType: int64
+		lineageTag: 3f7991e1-9dc6-49a2-9891-dff77c8a16f0
+		summarizeBy: none
+		sourceColumn: ObservedDays
+
+	column 'Duration Tier'
+		dataType: string
+		lineageTag: 0a588edd-7e54-4dc9-ae27-f885772d87be
+		summarizeBy: none
+		sourceColumn: DurationTier
+		sortByColumn: 'Duration Tier Sort'
+
+	column 'Duration Tier Sort'
+		dataType: int64
+		isHidden
+		lineageTag: 04f2da0d-4e67-46ea-920d-21ac0e2f44a7
+		summarizeBy: none
+		sourceColumn: DurationTierSort
+
+	partition DimCampaign = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, DatabaseName),
+				    Data = Source{[Schema="mart", Item="DimCampaign"]}[Data]
+				in
+				    Data
+
